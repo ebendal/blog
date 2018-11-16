@@ -1,22 +1,29 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: node:latest
+    steps:
+      - checkout
+      - run: npm install hexo-cli -g
+      - run: npm install
+      - run: hexo generate
+      - store_artifacts:
+          path: public
+  deploy:
+    docker:
+      - image: governmentpaas/cf-cli
+    steps:
+      - checkout
+      - run: mv public blog && mkdir public && mv blog public
+      - run: cf login -a $PWS_API_URL -u $PWS_USERNAME -p $PWS_PASSWORD -o ebendal -s production
+      - run: cf push
+
 workflows:
   version: 2
   build-and-deploy:
     jobs:
-      build:
-        docker:
-          - image: node:latest
-        steps:
-          - checkout
-          - run: npm install hexo-cli -g
-          - run: npm install
-          - run: hexo generate
-          - store_artifacts:
-              path: public
-      deploy:
-        docker:
-          - image: governmentpaas/cf-cli
-        steps:
-          - checkout
-          - run: mv public blog && mkdir public && mv blog public
-          - run: cf login -a $PWS_API_URL -u $PWS_USERNAME -p $PWS_PASSWORD -o ebendal -s production
-          - run: cf push
+      - build
+      - deploy:
+          requires:
+            - build
