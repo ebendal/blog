@@ -1,4 +1,3 @@
 ---
-title: topics
-date: null
+title: Topics
 ---
