@@ -2,6 +2,6 @@ applications:
 - name: blog
   path: public
   buildpack: staticfile_buildpack
-  memory: 64M
+  memory: 32M
   routes:
   - route: ebendal.cfapps.io/blog
