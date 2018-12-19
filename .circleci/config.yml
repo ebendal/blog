@@ -19,8 +19,8 @@ jobs:
       - checkout
       - attach_workspace:
           at: ./
-      - run: cf login -a $PWS_API_URL -u $PWS_USERNAME -p $PWS_PASSWORD -o $PWS_ORG -s $PWS_SPACE_PRODUCTION
-      - run: cf push
+      - run: cf login -a $PWS_API_URL -u $PWS_USERNAME -p $PWS_PASSWORD -o $PWS_ORG -s $PWS_SPACE
+      - run: cf push -d $DOMAIN --hostname $HOSTNAME --route-path $ROUTE_PATH
 
 workflows:
   version: 2.1
