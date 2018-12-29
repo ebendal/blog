@@ -24,6 +24,9 @@ hexo new page <path-name>
 Restart development server
 
 ##### Create draft post
+```sh
+hexo new draft <title>
+```
 
 ##### Publish post 
 
