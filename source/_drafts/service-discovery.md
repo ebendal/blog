@@ -7,3 +7,4 @@ title: Service Discovery
 
 ###### Sources  
 1. [Service Discovery in a Microservices Architecture](https://www.nginx.com/blog/service-discovery-in-a-microservices-architecture/)
+2. [Spring Cloud Netflix](https://cloud.spring.io/spring-cloud-netflix/single/spring-cloud-netflix.html)
