@@ -71,7 +71,7 @@ Gradle is the build tool of choice. To let Gradle fetch all the dependencies, co
 
 The Jar file can be found at `build/libs/twelve-factor.jar`.
 
-Before running the application give the application a name and get rid of a Spring Boot warning. Rename the file `application.properties` to `application.yml` and add the following:
+Before running the application give the application a name and disable some defaults. Rename the file `application.properties` to `application.yml` and add the following:
 
 ```yml
 spring:
@@ -79,6 +79,8 @@ spring:
     name: twelve-factor
   jpa:
     open-in-view: false
+  flyway:
+    enabled: false
 ```
 
 Run the application on your development machine:
@@ -90,7 +92,7 @@ Run the application on your development machine:
 Check the proper functioning of the application by going to `http://localhost:8080/actuator/health` with your favourite HTTP request tool. For example Curl:
 
 ```console
-curl http://localhost:8080
+curl http://localhost:8080/actuator/health
 ```
 Response:
 ```json
@@ -104,44 +106,66 @@ After this step the application looks like [this](https://github.com/ebendal/twe
 ## 3. Config
 ##### Store config in the environment
 
-
+An application has a different configuration in every environment it runs. This configuration should not be inside the produced artifact. The configuration should be obtained upon startup of the application from environment variables or an external service.
 
 ###### Implementation
-wewfwgwg
-```yaml
+
+The environments in which this application should run is the developer machine and on an arbitrary `space` in Cloud Foundry (for example a `development`,`test`,`staging`, and `production` space). Spring profiles can be used to make the distinction between a local machine and a cloud environment, but should not be used for distinction between different Cloud Foundry spaces.
+
+
+Edit the `application.yml` so it will look like this:
+ 
+```yml
+spring:
+  application:
+    name: twelve-factor
+  jpa:
+    open-in-view: false
+  flyway:
+    enabled: false
 ---
 spring:
   profiles: local
 info:
   application:
-    name: ${spring.application.name}
+    environment: local
     platform: ${os.name}
 ---
 spring:
   profiles: cloud
 info:
   application:
-    name: ${vcap.application.name}
+    environment: ${vcap.application.space_name}
     platform: ${platform.name}
 ```
-jnjn
+
+The profile specific properties will only be set when that profile is active. In Cloud Foundry the `cloud` profile is always active. In the `application.yml` we configure the Spring actuator info endpoint. The `${}` values instruct Spring to find the values, among others, in environment variables. 
+
+To run the application on your local machine you can now use:
+
 ```console
 ./gradlew bootRun --args='--spring.profiles.active=local'
 ```
 
+Check the response of the actuator info endpoint:
 ```console
 $ curl localhost:8080/actuator/info
 ```
-
 ```json
 {
   "application": {
-    "name": "twelve-factor",
+    "environment": "local",
     "platform": "Mac OS X"
   }
 }
 ```
 
+In Cloud Foundry there are two ways to get information from the environment.
+
+- Standard environment variables found in the `VCAP` environment variable. The `vcap.application.space_name` is an example.
+- Custom environment variables created when deploying the application. The `platform.name` is an example.
+
+To deploy an application to Cloud Foundry you need to give it at least a name. One of the deployment features of Cloud Foundry is to use a manifest file. Create the following `manifest.yml` in the root of the repository:
 ```yaml
 applications:
   - name: twelve-factor
@@ -150,29 +174,28 @@ applications:
       PLATFORM_NAME: Cloud Foundry
 ```
 
+In this file the custom environment variable `PLATFORM_NAME` is also defined. 
 
+Now the application can be deployed:
 ```console
 cf push --random-route
 ```
-
+The two environment variables the application uses can be found when you display the environment of the app:
 ```console
 cf env twelve-factor
 ```
-
+Check the response of the actuator info endpoint:
 ```console
 curl <random-generated-uri>/actuator/info
 ```
-
 ```json
 {
   "application": {
-    "name": "twelve-factor",
+    "environment": "<space-name>",
     "platform": "Cloud Foundry"
   }
 }
 ```
-
-
 After this step the application looks like [this](https://github.com/ebendal/twelve-factor/tree/three).
 
 
