@@ -369,7 +369,13 @@ docker-compose up mysql
 ## 11. Logs
 ##### Treat logs as event streams
 
-In Cloud Foundry your app should just log to the standard system out and system error. An agent will pick up those logs and send it to the log aggregator that aggregates all the logs from all the apps. As a developer you cannot do anything with those logs. The administrators of the Cloud Foundry instance will be able to tap in on that stream. Also the API that is used by the the CLI gets logs from that stream.
+In Cloud Foundry your app should just log to the standard system out and system error. An agent will pick up those logs and send it to the log aggregator that aggregates all the logs from all the apps. As a developer you cannot do anything with those logs. The administrators of the Cloud Foundry instance will be able to tap in on that stream. Also the API that is used by the CLI gets logs from that stream. You can live tail the logs stream or get recent logs.
+
+```shell script
+cf logs twelve-factor
+curl <app-uri>/actuator/info
+cf logs twelve-factor --recent
+```
 
 You can choose to let the app logging be forwarded to your own log aggregator as well. To do this first create an account on a cloud service that aggregates logging (for example Papertrail). Get a syslog uri and use it in the following commands:
 
