@@ -349,6 +349,8 @@ services:
 
 Now configure the datasource of the app when the `local` profile is active in the `application.yml`:
 ```yaml
+TODO INCLUSIEF TOP OF FILE
+
 spring:
   profiles: local
   datasource:
@@ -401,7 +403,7 @@ applications:
 
 Up till now we used Hibernate to migrate our database. We will use a different library called Flyway to take of that for us. By default it will migrate the app on startup, which for now we will leave like this. It would be even better to let the migration be triggered by an admin trigger.
 
-Enable flyway in the `apllication.yml` and configure Hibernate to only validate the schema:
+Enable flyway in the `application.yml` and configure Hibernate to only validate the schema:
 ```yaml
 spring:
   application:
