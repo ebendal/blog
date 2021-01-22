@@ -20,7 +20,6 @@ jobs:
       - attach_workspace:
           at: ./
       - run: heroku plugins:install heroku-cli-static
-      - run: heroku buildpacks:set -a ebendal-blog https://github.com/hone/heroku-buildpack-static
       - run: heroku static:deploy -a ebendal-blog
 
 workflows:
